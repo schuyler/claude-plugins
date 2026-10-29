@@ -9,9 +9,9 @@
   },
   "plugins": [
     {
-      "name": "rule-of-two",
-      "source": "./plugins/rule-of-two",
-      "description": "Process rules for multi-file, design-heavy work: requirements, TDD, and review gates where a second party always checks the first."
+      "name": "schuyler",
+      "source": "./plugins/schuyler",
+      "description": "Schuyler's Claude Code skills."
     }
   ]
 }
