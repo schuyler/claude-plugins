@@ -1,0 +1,9 @@
+{
+  "name": "rule-of-two",
+  "description": "Process rules for multi-file, design-heavy work: requirements, TDD, and review gates where a second party always checks the first.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Schuyler Erle",
+    "email": "schuyler@nocat.net"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "schuyler",
+  "owner": {
+    "name": "Schuyler Erle",
+    "email": "schuyler@nocat.net"
+  },
+  "metadata": {
+    "description": "Schuyler Erle's Claude Code plugins."
+  },
+  "plugins": [
+    {
+      "name": "rule-of-two",
+      "source": "./plugins/rule-of-two",
+      "description": "Process rules for multi-file, design-heavy work: requirements, TDD, and review gates where a second party always checks the first."
+    }
+  ]
+}
