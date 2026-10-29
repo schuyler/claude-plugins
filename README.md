@@ -22,3 +22,7 @@ It's opinionated and written for my own workflow. It assumes subagents are avail
 ### /schuyler:docs
 
 Writes READMEs and other user-facing documentation in my style: one-liner first, code early, honest about limitations, no marketing language. It ships with a dozen of my actual READMEs as reference examples. Don't use it for code comments or commit messages.
+
+### /schuyler:ntfy
+
+Sends a push notification to my phone via ntfy when I ask to be pinged. It reads the topic URL from `~/.claude/ntfy-url.txt` and a bearer token from `~/.claude/ntfy-token.txt`, neither of which is in this repo, so it's useless on a machine without them. It's here so my setup syncs, not because you need it.
