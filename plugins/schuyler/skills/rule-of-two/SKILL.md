@@ -179,8 +179,9 @@ that defers to the user is satisfied by them, not in conflict with them.*
    the whole task, so triage is the Rule of Two applied to the review
    itself. It decides what gets fixed, not whether the work gets
    reviewed, so it is not self-certification.*
-   - A critical/important finding that doesn't trace to an approved
-     requirement is reclassified as an edge case, with a stated reason.
+   - A critical finding that doesn't trace to an approved requirement,
+     or an important one that doesn't trace to a settled premise, is
+     reclassified as an edge case, with a stated reason.
    - Each edge case gets a disposition: **fix now** (one or two lines,
      no new mechanism, at most one test), **Deferred** (worth
      remembering), or **drop**. The test for fixing: the benefit (how
