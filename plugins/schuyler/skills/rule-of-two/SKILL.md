@@ -60,14 +60,15 @@ that defers to the user is satisfied by them, not in conflict with them.*
    requirements list where every item carries a provenance tag —
    *stated* (traceable to the user's words), *memory* (durable project
    context), *inferred* (Claude's assumption, individually vetoable),
-   or *open* (a genuine question) — a "so that" rationale, and
-   acceptance criteria concrete enough to test against. The user gates
+   *open* (a genuine question), or *proposed* (scope set aside during
+   a task; rule 7) — a "so that" rationale, and acceptance criteria
+   concrete enough to test against. The user gates
    this artifact, not a subagent: requirements correctness lives in their
    head, and a cold reviewer can only check the list against a brief
    the same author wrote. The approved list becomes the settled
    premises for every downstream review brief (rule 4), and downstream
-   reviewers rate work not traceable to an approved requirement as an
-   *important* finding. When running autonomously, don't block: tag
+   reviewers rate work not traceable to a settled premise (rule 4) as
+   an *important* finding. When running autonomously, don't block: tag
    every inference, take the minimum-scope reading — least commitment,
    not most defense — and surface the full list in the report. *Unstated requirements don't stay
    unstated — Claude invents them silently, and its priors pick the
@@ -106,6 +107,19 @@ that defers to the user is satisfied by them, not in conflict with them.*
    then implement. *Tests written after implementation tend to confirm what
    was built rather than verify what was intended. Writing them first locks
    in the requirement before the solution biases the test design.*
+
+   Red transcribes the approved acceptance criteria: a failing test
+   per criterion. A criterion no test can check is verified at
+   acceptance (rule 7, step 7). A test on an input no criterion names
+   is not written; log it as a proposed requirement (rule 7). The Red
+   gate's scope checks, carried in the Red review brief, are two:
+   every criterion not deferred to acceptance has a test that can
+   fail, and no test exceeds the criteria. The reviewer still reports
+   everything (rule 4). *Tests feel free because they don't ship, but
+   every test obligates Green to handle its input, so a test beyond
+   the criteria is a requirement that skipped the user's gate. A
+   bounded set also gives the reviewer a checklist; an open-ended
+   "what's missing?" is where reviewers invent scope.*
 3. **Subagent delegation**: Delegate when it buys something concrete:
    parallelism across independent work streams (launch them together, in
    the background), an independent reviewer (Rule of Two), or a workload
@@ -124,7 +138,7 @@ that defers to the user is satisfied by them, not in conflict with them.*
    the main agent runs the loop but never self-certifies. The review
    brief states the phase under review and lists the settled premises —
    the approved requirements (rule 1), the approved design, gated
-   tests, and relevant harness facts — as given. Reviewers report premise challenges as *upstream concerns*,
+   tests, triage dispositions, and relevant harness facts — as given. Reviewers report premise challenges as *upstream concerns*,
    which never fail the gate; the main agent surfaces them, and new
    evidence that a premise is wrong follows the escalation path. *A cold
    reviewer can't tell settled decisions from unexamined assumptions and
@@ -138,8 +152,10 @@ that defers to the user is satisfied by them, not in conflict with them.*
      the requirement and the input.
    - *important* — an approved requirement is unmet, a test asserts
      nothing that can fail, or the change carries machinery that
-     nothing reaches or no requirement asks for. State the requirement
-     or the line.
+     nothing reaches or no settled premise asks for — including
+     implementation code in a design beyond signatures, types and data
+     formats, and a test on an input no acceptance criterion names.
+     State the requirement or the line.
    - *cosmetic* — everything else. Does not fail the gate.
    - *edge cases* — unrated. A failure on an input the requirements
      don't cover, whatever its consequence. Give the input, the
@@ -174,10 +190,11 @@ that defers to the user is satisfied by them, not in conflict with them.*
      unsure, defer.
    - An edge case with a severe consequence (data loss, a security
      hole, a hang in normal operation, a wrong user-visible result) is
-     evidence the requirements missed something. Take it to the user as
-     a proposed requirement change, with its cost. It neither fails the
-     gate nor gets dropped. So does any fix that would add a mechanism
-     or a test no requirement asks for.
+     evidence the requirements missed something. Take it to the user
+     now as a requirement change, with its cost. It neither fails the
+     gate nor gets dropped. Any other edge case whose fix would add
+     mechanism or a test no requirement asks for is logged as a
+     proposed requirement (rule 7).
    - Record every disposition (fixed / deferred / dropped / reclassified,
      with a one-line reason) for the acceptance report.
 
@@ -224,13 +241,28 @@ that defers to the user is satisfied by them, not in conflict with them.*
    6. Final test verification
    7. Acceptance check (the user approves before merge, verified
       against the approved requirements, with the triage dispositions
-      and the Deferred list)
+      and the Deferred list, including proposed requirements)
 
-   Every gate may also produce **Deferred** items: input, consequence,
-   and why it was deferred. They live in the design doc under
-   `Deferred` and go into the acceptance report, where the user decides
-   for each one whether to drop it, file an issue, or start a new task.
-   Deferring is a normal outcome, not an unfinished one.
+   Every phase or gate may also produce **Deferred** items: input,
+   consequence, and why it was deferred. They live in the design doc
+   under `Deferred` and go into the acceptance report, where the user
+   decides for each one whether to drop it, file an issue, or start a
+   new task. Deferring is a normal outcome, not an unfinished one.
+
+   An item set aside for scope rather than cost — a design alternative
+   no requirement asked for (rule 9), a test beyond the criteria
+   (rule 2), a handler not built (rule 12), a non-severe edge-case fix
+   that would add mechanism (rule 4) — is a Deferred item written as a
+   **proposed requirement**: outcome, "so that" rationale, acceptance
+   criteria, tagged *proposed* (rule 1). The user can veto it like an
+   inference; it is re-tagged *stated* on approval, and never assumed
+   approved when running autonomously. It is never saved to memory:
+   it is Claude's own inference under a new label, and memory would
+   launder it into durable context. *Least mechanism
+   (rule 12) is lossy unless what was left out is recorded in the form
+   the next task's requirements phase can consume. Writing it as an
+   outcome applies rule 1's delete-the-mechanism test now, while the
+   context is fresh.*
 
    Each "gate" is a pass/fail decision. If the review finds no
    critical/important issues, the gate passes and the next phase begins.
@@ -256,7 +288,16 @@ that defers to the user is satisfied by them, not in conflict with them.*
    `.claude/` is available; otherwise keep them in the conversation)
    but don't try to check them into the repo. A design document states the
    approved requirements (rule 1) that motivate it — outcomes and
-   acceptance criteria, not just the plan — before it states the plan.
+   acceptance criteria, not just the plan — before it states the plan:
+   interfaces, data flow, and each decision with its reason. Then
+   `Rejected alternatives`, each with its reason, and `Deferred`
+   (rule 7); an alternative rejected purely for scope goes under
+   `Deferred`. Code is limited to signatures, types and data formats. A
+   question only a spike can answer is investigation (rule 4, not
+   gated): record the answer in the doc and delete the spike before
+   design review. *A sketch gets reviewed instead of the decisions it
+   embodies, and copied by the Green author instead of test-driven,
+   which defeats rule 2 in substance.*
    Once they are fully implemented, they are obsolete and should be
    deleted; the finished code should transparently document its own
    design. *A plan read without its requirements reads as a list of
@@ -277,4 +318,24 @@ that defers to the user is satisfied by them, not in conflict with them.*
    and update memory if applicable. *Each conversation starts cold.
    Without explicit capture, lessons learned in one session are lost by
    the next.*
+12. **Least mechanism**: Build the least mechanism that meets the
+    settled premises (rule 4): fewest moving parts, not fewest lines. A
+    handler, retry, cache, knob, or branch for an input no premise
+    covers is not built; log it as a proposed requirement (rule 7), or
+    report it to the user now if its consequence is severe (rule 4). An
+    implementation that passes the tests by special-casing their inputs
+    has not reduced mechanism; it has hidden it.
+
+    Design and Green author briefs carry rule 12's first paragraph
+    verbatim, as review briefs carry the severity definitions. The
+    Green reviewer measures mechanism against the approved design:
+    mechanism the design doesn't call for is *important* (rule 4);
+    mechanism the design calls for that no requirement asks for
+    challenges a settled premise and is an upstream concern. *An
+    unrequested handler is a guess about deployment that the
+    requirements phase exists to make visible, and it is review surface
+    at every later gate. Said to the author before the work, the
+    reminder costs a sentence; said by a reviewer after, it costs a fix
+    tranche. The counterweight to Claude's robustness prior belongs
+    where the prior acts.*
 
