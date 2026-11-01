@@ -19,6 +19,12 @@ Sequences Standard-tier work (anything touching multiple files, involving design
 
 It's opinionated and written for my own workflow. It assumes subagents are available, and it expects a CLAUDE.md that classifies tasks into tiers before work starts. Without that, it'll still run, but you'll want to read it first.
 
+### /schuyler:afk
+
+Tells the agent to finish the current task without me, in the same session, while its context is still cached. A cold restart re-reads everything and roughly doubles what the session costs, which I almost never want. It runs on top of rule-of-two: the agent decides every gate I would normally hold, reviews its subagents' output critically so they don't sneak in new requirements, and keeps going as long as review feedback is still worth acting on. When the work is done, it squash-merges a PR once CI passes, or once the local tests pass if there's no CI. Out-of-scope problems get filed as GitHub issues, except security holes, which only go in the report and handoff.
+
+It stops short of anything outward-facing beyond pushing, PRs, merging and issues, and it won't merge with a severe problem on record. Unfinished work gets pushed to a branch, and every session ends with a report of the decisions it made and a handoff prompt for whatever's left. The model can't invoke it; you have to type `/schuyler:afk`.
+
 ### /schuyler:docs
 
 Writes READMEs and other user-facing documentation in my style: one-liner first, code early, honest about limitations, no marketing language. It ships with a dozen of my actual READMEs as reference examples. Don't use it for code comments or commit messages.
