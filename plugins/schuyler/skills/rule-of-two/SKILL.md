@@ -5,9 +5,6 @@ description: This skill carries the mandatory rules for Standard-tier work — r
 
 # Standard-tier rules
 
-If a `/standard-task` skill is available, use that instead of this one
-and ignore the rest of this file.
-
 **The Rule of Two:** no work is accepted until a second party — a
 different subagent, or the user where there are no subagents — has
 reviewed it cold. The author never reviews their own work. Everything

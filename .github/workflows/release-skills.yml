@@ -19,7 +19,7 @@ jobs:
           cd plugins/schuyler/skills
           for dir in */; do
             skill=${dir%/}
-            [ "$skill" = ntfy ] && continue
+            case "$skill" in ntfy|standard-task) continue ;; esac
             zip -r "$RUNNER_TEMP/dist/$skill.zip" "$skill"
           done
 
