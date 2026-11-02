@@ -27,9 +27,17 @@ Tells the agent to finish the current task without me, in the same session, whil
 
 It stops short of anything outward-facing beyond pushing, PRs, merging and issues, and it won't merge with a severe problem on record. Unfinished work gets pushed to a branch, and every session ends with a report of the decisions it made and a handoff prompt for whatever's left. The model can't invoke it; you have to type `/schuyler:afk`.
 
+### /schuyler:finish
+
+A command, not a skill: it tells the agent to carry the current task to completion unattended, following the rule of two and delegating to subagents to save context. It commits to main but doesn't push, and runs `/schuyler:wrap` as the penultimate step. It's the cautious sibling of `afk`, which pushes and merges. Commands aren't in the release ZIPs, only the plugin install.
+
+### /schuyler:git
+
+Also a command. Three rules for Git: never `git add -A`, write commit messages for an expert audience, and put worktrees in `.worktree/`. That last one assumes `.worktree/` is in your global `.gitignore`, which is mine and probably not yours.
+
 ### /schuyler:wrap
 
-Runs an end-of-session retrospective in the main conversation: what went well, what needed correcting, what was merely notable. It saves the lessons that would change a future decision to project memory, refreshes memories the session made stale, and, if there's unfinished work, ends with a handoff prompt for the next session. It drops any lesson that wouldn't change a future decision, so zero new memories is a normal result. It expects the memory layout described in `CLAUDE.md`, and it mentions a `/finish` command that isn't in this repo.
+Runs an end-of-session retrospective in the main conversation: what went well, what needed correcting, what was merely notable. It saves the lessons that would change a future decision to project memory, refreshes memories the session made stale, and, if there's unfinished work, ends with a handoff prompt for the next session. It drops any lesson that wouldn't change a future decision, so zero new memories is a normal result. It expects the memory layout described in `CLAUDE.md`. `/schuyler:finish` calls it.
 
 ### /schuyler:memory-sweep
 
@@ -42,3 +50,17 @@ Writes READMEs and other user-facing documentation in my style: one-liner first,
 ### /schuyler:ntfy
 
 Sends a push notification to my phone via ntfy when I ask to be pinged. It reads the topic URL from `~/.claude/ntfy-url.txt` and a bearer token from `~/.claude/ntfy-token.txt`, neither of which is in this repo, so it's useless on a machine without them. It's here so my setup syncs, not because you need it.
+
+## Agents
+
+### schuyler:reviewer
+
+A read-only reviewer agent on the `opus` model alias, for the review gates in `rule-of-two`. Its tools are limited to Read, Grep, Glob and Bash, and its instructions forbid editing anything, so it can't quietly fix what it was asked to judge. `rule-of-two` falls back to a general subagent told to be read-only when no reviewer agent exists, but this is what it's written for. Agents aren't in the release ZIPs, only the plugin install.
+
+## Status line
+
+`plugins/schuyler/statusline.sh` prints one line: model, session cost, context remaining (green, yellow, red), tokens in and out, and cache hits. It needs `jq` and `bc`. Copy it somewhere and point `statusLine` at it in your `settings.json`:
+
+```json
+"statusLine": { "type": "command", "command": "~/.claude/statusline.sh" }
+```

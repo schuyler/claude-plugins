@@ -227,9 +227,7 @@ that defers to the user is satisfied by them, not in conflict with them.*
    proceeding.
 6. **Disjoint parallel streams**: Parallel subagents must not modify the
    same files. Partition the work so streams are file-disjoint; if that
-   isn't possible, sequence the streams. Agents work in the main tree by
-   default; use a worktree only when it is the stated project
-   convention or the user asks for one.
+   isn't possible, sequence the streams.
 7. **Implementation pipeline**:
    1. Requirements → user gate (rule 1)
    2. Design → review → gate
