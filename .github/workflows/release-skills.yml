@@ -1,0 +1,29 @@
+name: Release skills
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build skill ZIPs
+        run: |
+          mkdir "$RUNNER_TEMP/dist"
+          cd plugins/schuyler/skills
+          for dir in */; do
+            skill=${dir%/}
+            [ "$skill" = ntfy ] && continue
+            zip -r "$RUNNER_TEMP/dist/$skill.zip" "$skill"
+          done
+
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" "$RUNNER_TEMP"/dist/*.zip --notes ""
